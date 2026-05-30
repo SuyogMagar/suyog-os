@@ -280,9 +280,8 @@ export function ProjectDetail({ slug }: { slug: string }) {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`rounded-md px-2.5 py-1 transition ${
-              tab === t ? "bg-background text-primary" : "text-muted-foreground hover:text-foreground"
-            }`}
+            className={`rounded-md px-2.5 py-1 transition ${tab === t ? "bg-background text-primary" : "text-muted-foreground hover:text-foreground"
+              }`}
           >
             {t}
           </button>
@@ -314,18 +313,18 @@ export function ProjectDetail({ slug }: { slug: string }) {
           <div>
             <div className="mb-2 text-primary">## Architecture</div>
             <pre className="whitespace-pre-wrap text-foreground/90">
-{p.architecture.map((l) => `  ${l}`).join("\n")}
+              {p.architecture.map((l) => `  ${l}`).join("\n")}
             </pre>
           </div>
         )}
         {tab === "Metrics.json" && (
           <pre className="whitespace-pre-wrap text-foreground/90">
-{JSON.stringify(p.metrics, null, 2)}
+            {JSON.stringify(p.metrics, null, 2)}
           </pre>
         )}
         {tab === "Deployment.yaml" && (
           <pre className="whitespace-pre-wrap text-accent">
-{`# deployment\n${p.deployment}`}
+            {`# deployment\n${p.deployment}`}
           </pre>
         )}
       </div>
@@ -519,6 +518,44 @@ export function ResumePanel() {
           title="Resume PDF"
         />
         <div className="flex flex-col gap-2">
+          <div className="mb-2 flex flex-col items-center justify-center rounded-lg border border-border bg-surface-2/40 p-5">
+            <div className="relative flex size-24 items-center justify-center">
+              <svg className="absolute inset-0 size-full -rotate-90" viewBox="0 0 100 100">
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  className="text-muted-foreground/20"
+                />
+                <motion.circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  fill="none"
+                  stroke="#22c55e"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray="263.9"
+                  initial={{ strokeDashoffset: 263.9 }}
+                  animate={{ strokeDashoffset: 26.39 }}
+                  transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+                />
+              </svg>
+              <div className="flex items-baseline gap-0.5">
+                <span className="text-2xl font-bold text-foreground">90</span>
+                <span className="text-[10px] font-medium text-muted-foreground">/100</span>
+              </div>
+            </div>
+            <div className="mt-4 text-[10px] uppercase tracking-widest text-muted-foreground">
+              ATS Score
+            </div>
+            <div className="mt-1 text-[9px] text-muted-foreground/50">
+              By ResumeWorded
+            </div>
+          </div>
           <a
             href="/Resume.pdf"
             download="Suyog_Magar_Resume.pdf"

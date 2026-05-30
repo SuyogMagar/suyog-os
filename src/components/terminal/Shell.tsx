@@ -59,7 +59,12 @@ export function Shell() {
 
   // autoscroll
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    if (blocks.length === 0) return;
+    const lastId = blocks[blocks.length - 1].id;
+    const el = document.getElementById(`block-${lastId}`);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }, [blocks]);
 
   const push = useCallback((cmd: string, node: React.ReactNode) => {
@@ -250,6 +255,8 @@ type 'help' for available commands`}
               {blocks.map((b) => (
                 <motion.section
                   key={b.id}
+                  id={`block-${b.id}`}
+                  className="scroll-mt-24"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.25 }}
