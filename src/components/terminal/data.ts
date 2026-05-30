@@ -14,34 +14,65 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    slug: "Teckniv",
-    name: "Teckniv",
-    tagline: "Real-time event-driven SaaS platform.",
-    problem: "Centralize multi-tenant operational data with sub-second updates across services.",
+    slug: "Full-Stack-Enterprise-Operations-Platform",
+    name: "Full-Stack Enterprise Operations Platform",
+    tagline: "Multi-module enterprise operations suite on Spring Boot + PostgreSQL.",
+    problem:
+      "Unify HR, inventory, billing and reporting for mid-size enterprises under one secure, role-based platform.",
     architecture: [
-      "Client → API Gateway (Spring Cloud Gateway)",
-      "Gateway → Auth Service (JWT, OAuth2)",
-      "Services → Kafka topics (events.*)",
-      "Consumers → Postgres + Redis cache",
-      "WebSocket fan-out → Frontend",
+      "React client → Spring Boot REST API",
+      "Spring Security (JWT) → Role-based access",
+      "Spring Data JPA → PostgreSQL (normalized schema)",
+      "Reporting service → scheduled jobs → PDF/CSV exports",
+      "Dockerized services orchestrated via docker-compose",
     ],
-    stack: ["Java 21", "Spring Boot 3", "Kafka", "Redis", "Postgres", "Docker", "Kubernetes"],
+    stack: ["Java", "Spring Boot", "Spring JPA", "PostgreSQL", "React", "Docker"],
     features: [
-      "Event-driven micro-services",
-      "Multi-tenant data isolation",
-      "Realtime dashboards over WebSocket",
-      "Role-based access control",
+      "Modular domain services (HR, inventory, billing)",
+      "JWT auth with fine-grained RBAC",
+      "Audit trail on every mutation",
+      "Exportable reports (PDF / CSV)",
     ],
     challenges: [
-      "Idempotent consumers across replays",
-      "Hot-key cache invalidation under load",
+      "Designing a normalized PostgreSQL schema that scales across modules",
+      "Transactional consistency across cross-module workflows",
     ],
     learnings: [
-      "CQRS + outbox pattern for reliable event publishing",
-      "K8s HPA tuning for bursty traffic",
+      "Spring JPA + PostgreSQL indexing strategies for OLTP",
+      "Clean domain boundaries inside a monolith pay off long-term",
     ],
-    metrics: { p95_latency: "84ms", throughput: "12k rps", uptime: "99.97%" },
-    deployment: "kubectl rollout: 3 replicas, HPA 3-12, Istio mesh",
+    metrics: { p95_latency: "92ms", tables: "48", modules: "5" },
+    deployment: "docker compose · spring-boot · postgres 16 · nginx",
+  },
+  {
+    slug: "GeoRescue",
+    name: "GeoRescue",
+    tagline: "Geo-aware emergency response platform on MongoDB.",
+    problem:
+      "Match emergency requests with the nearest available responders in real time using geospatial queries.",
+    architecture: [
+      "Mobile/Web client → Spring Boot API",
+      "MongoDB (2dsphere index) → geo-nearest queries",
+      "WebSocket channel → live responder updates",
+      "Notification worker → SMS / push alerts",
+    ],
+    stack: ["Java", "Spring Boot", "MongoDB", "WebSocket", "Docker"],
+    features: [
+      "Geospatial nearest-responder matching",
+      "Live location streaming over WebSocket",
+      "Incident lifecycle (open → assigned → resolved)",
+      "Heatmap of historical incidents",
+    ],
+    challenges: [
+      "Tuning MongoDB 2dsphere indexes for low-latency $near queries",
+      "Reconnect + state sync for flaky mobile networks",
+    ],
+    learnings: [
+      "MongoDB geospatial operators and index tradeoffs",
+      "Designing event flows that survive disconnects",
+    ],
+    metrics: { match_p95: "180ms", active_responders: "120", incidents_handled: "3.2k" },
+    deployment: "docker compose · spring-boot · mongo replica set",
   },
   {
     slug: "Real-Time-Stock-Pipeline",
@@ -84,53 +115,90 @@ export const PROJECTS: Project[] = [
     metrics: { compression: "~42% on text", throughput: "180 MB/s" },
     deployment: "java -jar huffman.jar encode input.txt out.huf",
   },
+];
+
+/* ---------- Skills, grouped, with related projects ---------- */
+
+export type Skill = {
+  name: string;
+  /** slugs from PROJECTS this skill was used in */
+  projects?: string[];
+};
+
+export type SkillCategory = {
+  id: string;
+  label: string;
+  icon: string;
+  skills: Skill[];
+};
+
+export const SKILL_CATEGORIES: SkillCategory[] = [
   {
-    slug: "DecentralX",
-    name: "DecentralX",
-    tagline: "Distributed file store with replication.",
-    problem: "Store files reliably across N nodes with no single point of failure.",
-    architecture: [
-      "Client → Gateway",
-      "Gateway → Hash ring (consistent hashing)",
-      "Storage Nodes (replication factor 3)",
-      "Gossip → membership & failure detection",
+    id: "languages",
+    label: "Programming Languages",
+    icon: "</>",
+    skills: [
+      { name: "Core Java", projects: ["Full-Stack-Enterprise-Operations-Platform", "GeoRescue", "Real-Time-Stock-Pipeline", "Huffman-Coder"] },
+      { name: "Python" },
     ],
-    stack: ["Java", "Netty", "Protobuf", "Docker"],
-    features: ["Consistent hashing", "Replication", "Read repair"],
-    challenges: ["Split-brain handling", "Rebalancing during node join"],
-    learnings: ["Quorum reads/writes", "Gossip protocol design"],
-    metrics: { nodes: "8", durability: "11 nines (modeled)", read_p95: "22ms" },
-    deployment: "docker compose · 8 storage · 2 gateway",
+  },
+  {
+    id: "backend",
+    label: "Backend",
+    icon: "⚙",
+    skills: [
+      { name: "Spring Boot", projects: ["Full-Stack-Enterprise-Operations-Platform", "GeoRescue", "Real-Time-Stock-Pipeline"] },
+      { name: "Spring JPA", projects: ["Full-Stack-Enterprise-Operations-Platform"] },
+    ],
+  },
+  {
+    id: "database",
+    label: "Database",
+    icon: "▤",
+    skills: [
+      { name: "PostgreSQL", projects: ["Full-Stack-Enterprise-Operations-Platform"] },
+      { name: "MongoDB", projects: ["GeoRescue"] },
+      { name: "SQL", projects: ["Full-Stack-Enterprise-Operations-Platform"] },
+    ],
+  },
+  {
+    id: "tools",
+    label: "Tools",
+    icon: "▣",
+    skills: [
+      { name: "Git" },
+      { name: "GitHub" },
+      { name: "VS Code" },
+      { name: "Postman" },
+      { name: "Bash Shell" },
+      { name: "Docker", projects: ["Full-Stack-Enterprise-Operations-Platform", "GeoRescue", "Real-Time-Stock-Pipeline"] },
+      { name: "Kubernetes" },
+    ],
+  },
+  {
+    id: "subjects",
+    label: "Core Subjects",
+    icon: "✦",
+    skills: [
+      { name: "DSA", projects: ["Huffman-Coder"] },
+      { name: "OOPs", projects: ["Full-Stack-Enterprise-Operations-Platform"] },
+      { name: "Operating Systems" },
+      { name: "Computer Networks", projects: ["Real-Time-Stock-Pipeline"] },
+      { name: "DBMS", projects: ["Full-Stack-Enterprise-Operations-Platform", "GeoRescue"] },
+    ],
   },
 ];
 
-export const SKILLS_GRAPH = [
-  { id: "client", label: "Frontend", x: 50, y: 60, tech: "React + TS", note: "SSR-ready UI" },
-  { id: "gateway", label: "API Gateway", x: 50, y: 140, tech: "Spring Cloud Gateway", note: "Routing, rate-limit" },
-  { id: "auth", label: "Auth", x: 220, y: 140, tech: "JWT · OAuth2", note: "Stateless tokens" },
-  { id: "svc", label: "Services", x: 50, y: 230, tech: "Spring Boot 3", note: "Domain services" },
-  { id: "kafka", label: "Kafka", x: 220, y: 230, tech: "Apache Kafka", note: "Event backbone" },
-  { id: "redis", label: "Redis", x: 390, y: 230, tech: "Redis 7", note: "Cache · pub/sub" },
-  { id: "db", label: "Postgres", x: 50, y: 320, tech: "Postgres 16", note: "OLTP store" },
-  { id: "k8s", label: "Kubernetes", x: 390, y: 320, tech: "K8s + Docker", note: "Orchestration" },
-];
-
-export const SKILL_EDGES: Array<[string, string]> = [
-  ["client", "gateway"],
-  ["gateway", "auth"],
-  ["gateway", "svc"],
-  ["svc", "kafka"],
-  ["kafka", "redis"],
-  ["svc", "db"],
-  ["kafka", "k8s"],
-  ["redis", "k8s"],
-];
+/* legacy exports kept for any stale imports */
+export const SKILLS_GRAPH: Array<{ id: string; label: string; x: number; y: number; tech: string; note: string }> = [];
+export const SKILL_EDGES: Array<[string, string]> = [];
 
 export const TIMELINE = [
   { hash: "a1f2d3", date: "2021-04", title: "Started Java development", body: "First Spring Boot service deployed." },
-  { hash: "b4c5d6", date: "2022-02", title: "Built DecentralX", body: "Distributed file store with replication and gossip." },
-  { hash: "c7d8e9", date: "2023-06", title: "Built Teckniv", body: "Multi-tenant event-driven SaaS on Kafka + K8s." },
-  { hash: "d8e9f0", date: "2024-01", title: "Real-Time-Stock-Pipeline", body: "Sub-second market data pipeline at 28k msg/s." },
+  { hash: "b4c5d6", date: "2022-02", title: "Built Huffman-Coder", body: "From-scratch lossless compressor in Java with CLI + benchmarks." },
+  { hash: "c7d8e9", date: "2023-06", title: "Built Full-Stack Enterprise Operations Platform", body: "Modular Spring Boot + PostgreSQL suite for HR, inventory and billing." },
+  { hash: "d8e9f0", date: "2024-01", title: "Real-Time-Stock-Pipeline", body: "Sub-second market data pipeline at 28k msg/s on Kafka + Redis." },
+  { hash: "e9f0a1", date: "2024-07", title: "Built GeoRescue", body: "Geo-aware emergency response platform on MongoDB 2dsphere." },
   { hash: "f1g2h3", date: "2024-10", title: "Deep dive: distributed systems", body: "Consensus, CRDTs, observability at scale." },
 ];
 

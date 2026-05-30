@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { AsciiShowcase } from "./AsciiShowcase";
-import { ABOUT_MD, PROJECTS, SKILLS_GRAPH, SKILL_EDGES, TIMELINE, type Project } from "./data";
+import { ABOUT_MD, PROJECTS, SKILL_CATEGORIES, TIMELINE, type Project } from "./data";
 
 /* ---------- Shared bits ---------- */
 
@@ -133,87 +133,114 @@ function renderMd(line: string, bold: boolean) {
   return bold ? s : s;
 }
 
-/* ---------- skills infra map ---------- */
+/* ---------- skills (terminal tree) ---------- */
 
 export function SkillsMap() {
   const [hover, setHover] = useState<string | null>(null);
-  const W = 460, H = 380;
-  const nodeById = (id: string) => SKILLS_GRAPH.find((n) => n.id === id)!;
+
+  const projectBySlug = useMemo(() => {
+    const m = new Map<string, Project>();
+    PROJECTS.forEach((p) => m.set(p.slug, p));
+    return m;
+  }, []);
+
+  const activeSkill = useMemo(() => {
+    if (!hover) return null;
+    for (const cat of SKILL_CATEGORIES) {
+      const s = cat.skills.find((sk) => sk.name === hover);
+      if (s) return { skill: s, category: cat };
+    }
+    return null;
+  }, [hover]);
+
   return (
-    <Window title="$ skills — infrastructure.map">
-      <div className="grid gap-0 md:grid-cols-[1fr_240px]">
-        <div className="relative overflow-hidden bg-[oklch(0.14_0.008_240)]">
-          <div className="absolute inset-0 grid-bg opacity-30" />
-          <svg viewBox={`0 0 ${W} ${H}`} className="relative h-[380px] w-full">
-            <defs>
-              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
-                <path d="M0,0 L10,5 L0,10 z" fill="oklch(0.72 0.18 240 / 0.7)" />
-              </marker>
-            </defs>
-            {SKILL_EDGES.map(([a, b], i) => {
-              const na = nodeById(a), nb = nodeById(b);
-              const active = hover === a || hover === b;
+    <Window title="$ skills — tree ~/skills">
+      <div className="grid gap-0 md:grid-cols-[1fr_260px]">
+        <div className="relative overflow-hidden bg-[oklch(0.14_0.008_240)] p-4 font-mono text-sm">
+          <div className="mb-2 text-xs text-muted-foreground">
+            <span className="text-prompt">$</span> tree ~/skills
+          </div>
+          <div className="text-foreground/90">
+            <div className="text-accent">skills/</div>
+            {SKILL_CATEGORIES.map((cat, ci) => {
+              const lastCat = ci === SKILL_CATEGORIES.length - 1;
+              const catBranch = lastCat ? "└──" : "├──";
+              const pipe = lastCat ? "   " : "│  ";
               return (
-                <g key={i}>
-                  <line
-                    x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
-                    stroke={active ? "oklch(0.78 0.15 160)" : "oklch(0.55 0.015 240 / 0.5)"}
-                    strokeWidth={active ? 1.6 : 1}
-                    markerEnd="url(#arrow)"
-                  />
-                  <line
-                    x1={na.x} y1={na.y} x2={nb.x} y2={nb.y}
-                    stroke="oklch(0.78 0.15 160 / 0.9)"
-                    strokeWidth="1.4"
-                    strokeDasharray="4 96"
-                    style={{ animation: `packet-flow ${3 + (i % 3)}s linear infinite` }}
-                  />
-                </g>
-              );
-            })}
-            {SKILLS_GRAPH.map((n) => {
-              const active = hover === n.id;
-              return (
-                <g
-                  key={n.id}
-                  onMouseEnter={() => setHover(n.id)}
-                  onMouseLeave={() => setHover(null)}
-                  className="cursor-pointer"
-                >
-                  <circle
-                    cx={n.x} cy={n.y} r={active ? 26 : 22}
-                    fill="oklch(0.20 0.010 240 / 0.9)"
-                    stroke={active ? "oklch(0.78 0.15 160)" : "oklch(0.72 0.18 240 / 0.8)"}
-                    strokeWidth={active ? 2 : 1.4}
-                    style={{ animation: `pulse-node ${2 + (n.x % 1.5)}s ease-in-out infinite` }}
-                  />
-                  <text x={n.x} y={n.y + 4} textAnchor="middle" fontSize="10" fill="oklch(0.95 0.005 240)">
-                    {n.label}
-                  </text>
-                </g>
-              );
-            })}
-          </svg>
-        </div>
-        <div className="border-t border-border p-4 text-sm md:border-l md:border-t-0">
-          {hover ? (
-            (() => {
-              const n = nodeById(hover);
-              return (
-                <div>
-                  <div className="text-xs uppercase tracking-widest text-muted-foreground">node</div>
-                  <div className="text-lg text-primary">{n.label}</div>
-                  <div className="mt-2 text-accent">{n.tech}</div>
-                  <p className="mt-2 text-muted-foreground">{n.note}</p>
+                <div key={cat.id}>
+                  <div className="flex items-center gap-2 leading-6">
+                    <span className="text-muted-foreground">{catBranch}</span>
+                    <span className="text-accent">{cat.icon}</span>
+                    <span className="text-primary">{cat.label}/</span>
+                  </div>
+                  {cat.skills.map((sk, si) => {
+                    const lastSk = si === cat.skills.length - 1;
+                    const skBranch = lastSk ? "└──" : "├──";
+                    const isActive = hover === sk.name;
+                    const hasProjects = sk.projects && sk.projects.length > 0;
+                    return (
+                      <div
+                        key={sk.name}
+                        onMouseEnter={() => setHover(sk.name)}
+                        onMouseLeave={() => setHover(null)}
+                        className={`flex items-center gap-2 leading-6 px-1 -mx-1 rounded transition-colors ${
+                          isActive ? "bg-surface-2/60" : "hover:bg-surface-2/30"
+                        }`}
+                      >
+                        <span className="text-muted-foreground whitespace-pre">{pipe}{skBranch}</span>
+                        <span className={isActive ? "text-accent" : "text-foreground/90"}>
+                          {sk.name}
+                        </span>
+                        {hasProjects && (
+                          <span className="text-[10px] text-muted-foreground">
+                            · {sk.projects!.length} project{sk.projects!.length > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               );
-            })()
+            })}
+          </div>
+        </div>
+
+        <div className="border-t border-border p-4 text-sm md:border-l md:border-t-0">
+          {activeSkill ? (
+            <div>
+              <div className="text-xs uppercase tracking-widest text-muted-foreground">
+                {activeSkill.category.label}
+              </div>
+              <div className="text-lg text-primary">{activeSkill.skill.name}</div>
+              <div className="mt-3 text-xs uppercase tracking-widest text-muted-foreground">
+                used in
+              </div>
+              {activeSkill.skill.projects && activeSkill.skill.projects.length > 0 ? (
+                <ul className="mt-1 space-y-1.5">
+                  {activeSkill.skill.projects.map((slug) => {
+                    const p = projectBySlug.get(slug);
+                    if (!p) return null;
+                    return (
+                      <li key={slug} className="rounded-md border border-border bg-surface-2/40 p-2">
+                        <div className="text-accent">{p.name}</div>
+                        <div className="text-xs text-muted-foreground">{p.tagline}</div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="mt-1 text-muted-foreground italic">
+                  Foundational skill — applied across coursework & exploration.
+                </div>
+              )}
+            </div>
           ) : (
             <div className="text-muted-foreground">
               <div className="text-xs uppercase tracking-widest">hint</div>
-              <div className="mt-1">Hover a node to inspect.</div>
+              <div className="mt-1">Hover a skill to see related projects.</div>
               <div className="mt-3 text-xs">
-                Edges animate live — emulating packets between services.
+                Organized as a static <span className="text-accent">tree</span> — like{" "}
+                <span className="text-accent">tree ~/skills</span> in your shell.
               </div>
             </div>
           )}
@@ -254,7 +281,7 @@ export function ProjectsList({ onOpen }: { onOpen: (slug: string) => void }) {
         ))}
       </div>
       <div className="border-t border-border px-4 py-2 text-xs text-muted-foreground">
-        tip: run <span className="text-accent">cd projects/Teckniv</span> to open a repo.
+        tip: run <span className="text-accent">cd projects/GeoRescue</span> to open a repo.
       </div>
     </Window>
   );
@@ -446,8 +473,12 @@ export function ArchitectureLab() {
           nodes={["API", "Kafka", "Consumers", "Redis", "Frontend"]}
         />
         <ArchCard
-          title="Distributed File System"
-          nodes={["Client", "Gateway", "Storage Nodes"]}
+          title="GeoRescue (MongoDB 2dsphere)"
+          nodes={["Client", "Spring Boot API", "MongoDB · $near", "WebSocket Fan-out"]}
+        />
+        <ArchCard
+          title="Enterprise Operations Platform"
+          nodes={["React Client", "Spring Boot REST", "Spring JPA", "PostgreSQL"]}
         />
       </div>
     </Window>
