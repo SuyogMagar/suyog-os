@@ -281,7 +281,7 @@ export function ProjectsList({ onOpen }: { onOpen: (slug: string) => void }) {
         ))}
       </div>
       <div className="border-t border-border px-4 py-2 text-xs text-muted-foreground">
-        tip: run <span className="text-accent">cd projects/Teckniv</span> to open a repo.
+        tip: run <span className="text-accent">cd projects/GeoRescue</span> to open a repo.
       </div>
     </Window>
   );
