@@ -92,11 +92,12 @@ function GithubStats() {
   const [totalCommits, setTotalCommits] = useState<number>(320);
 
   useEffect(() => {
-    fetch('https://github-contributions-api.jasonbarry.com/v1/suyogmagar')
+    // Using a live un-cached API to ensure real-time updates (bypasses Jason Barry CDN cache)
+    fetch('https://github-contributions-api.deno.dev/suyogmagar.json')
       .then(r => r.json())
       .then(d => {
-        if (d && d.total && typeof d.total.lastYear === 'number') {
-          setTotalCommits(d.total.lastYear);
+        if (d && typeof d.totalContributions === 'number') {
+          setTotalCommits(d.totalContributions);
         }
       })
       .catch(console.error);
@@ -104,13 +105,13 @@ function GithubStats() {
     if (!scrollRef.current) return;
     const el = scrollRef.current;
 
-    
+
     const interval = setInterval(() => {
       if (el.scrollWidth > el.clientWidth) {
         el.scrollLeft = el.scrollWidth;
       }
     }, 100);
-    
+
     setTimeout(() => clearInterval(interval), 3000);
     return () => clearInterval(interval);
   }, []);
@@ -127,12 +128,13 @@ function GithubStats() {
           </div>
         )}
       </div>
-      <div 
+      <div
         ref={scrollRef}
         className="flex-1 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-5"
       >
         <div className="min-w-max" id="github-calendar-wrapper">
-          <style dangerouslySetInnerHTML={{__html: `
+          <style dangerouslySetInnerHTML={{
+            __html: `
             #github-calendar-wrapper article footer,
             #github-calendar-wrapper .react-activity-calendar__footer {
               display: none !important;
@@ -174,7 +176,7 @@ function LeetcodeStats() {
           fetch(`https://alfa-leetcode-api.onrender.com/${username}/solved`).then((r) => r.json()),
           fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`).then((r) => r.json())
         ]);
-        
+
         if (!solvedRes.solvedProblem) {
           setData(fallbackData);
         } else {
@@ -222,7 +224,7 @@ function LeetcodeStats() {
           <div className="absolute top-5 left-5 text-xs uppercase text-muted-foreground z-10 transition-opacity group-hover:opacity-0">
             Problems Solved
           </div>
-          
+
           <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 bg-surface-2/95 z-20 rounded-lg p-5">
             <div className="w-full space-y-3">
               <ProblemBar label="Easy" count={data?.easy} total={800} color="bg-[oklch(0.78_0.15_160)]" loading={loading} />
@@ -232,7 +234,7 @@ function LeetcodeStats() {
           </div>
 
           <div className="flex items-center justify-center mt-4 group-hover:opacity-0 transition-opacity">
-            <div className="relative w-28 h-28 flex items-center justify-center rounded-full" 
+            <div className="relative w-28 h-28 flex items-center justify-center rounded-full"
               style={{
                 background: loading ? 'transparent' : `conic-gradient(
                   oklch(0.78 0.15 160) 0% ${easyPct}%, 
@@ -290,14 +292,14 @@ function AchievementsSection() {
         <span className="text-accent">🏆</span> Achievements & Badges
       </div>
       <div className="rounded-lg border border-border bg-surface-2/40 p-5 flex flex-col xl:flex-row gap-6 xl:items-center min-h-[100px]">
-        
-        <div className="flex items-center gap-4">
-          <span className="text-[10px] uppercase text-muted-foreground whitespace-nowrap">GitHub</span>
+
+        <div className="flex items-center gap-5">
+          <span className="text-xs font-bold uppercase tracking-wider text-foreground whitespace-nowrap">GitHub</span>
           <div className="flex gap-4">
             {githubBadges.map(badge => (
               <div key={badge.name} className="relative group flex items-center justify-center">
-                <img src={badge.url} alt={badge.name} className="w-12 h-12 object-contain drop-shadow-lg transition-transform hover:scale-110" />
-                <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
+                <img src={badge.url} alt={badge.name} className="w-16 h-16 object-contain drop-shadow-lg transition-transform hover:scale-110" />
+                <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
                   {badge.name}
                 </div>
               </div>
@@ -305,12 +307,12 @@ function AchievementsSection() {
           </div>
         </div>
 
-        <div className="w-px h-10 bg-border hidden xl:block"></div>
+        <div className="w-px h-16 bg-border hidden xl:block"></div>
         <div className="h-px w-full bg-border block xl:hidden"></div>
 
-        <div className="flex items-center gap-4">
-          <span className="text-[10px] uppercase text-muted-foreground whitespace-nowrap">LeetCode</span>
-          <div className="flex gap-3">
+        <div className="flex items-center gap-5">
+          <span className="text-xs font-bold uppercase tracking-wider text-foreground whitespace-nowrap">LeetCode</span>
+          <div className="flex gap-4">
             {loading ? (
               <span className="text-muted-foreground text-sm">Loading...</span>
             ) : (
@@ -318,8 +320,8 @@ function AchievementsSection() {
                 const iconUrl = b.icon.startsWith("http") ? b.icon : `https://leetcode.com${b.icon}`;
                 return (
                   <div key={i} className="relative group flex items-center justify-center">
-                    <img src={iconUrl} alt={b.displayName} className="w-10 h-10 object-contain drop-shadow-lg transition-transform hover:scale-110" />
-                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
+                    <img src={iconUrl} alt={b.displayName} className="w-16 h-16 object-contain drop-shadow-lg transition-transform hover:scale-110" />
+                    <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
                       {b.displayName}
                     </div>
                   </div>
@@ -340,9 +342,9 @@ function ProblemBar({ label, count, total, color, loading }: { label: string; co
     <div className="flex items-center gap-4 text-sm">
       <span className="w-16 text-muted-foreground">{label}</span>
       <div className="h-2 flex-1 overflow-hidden rounded-full bg-background">
-        <div 
-          className={`h-full ${color} transition-all duration-1000 ease-out`} 
-          style={{ width: `${pct}%` }} 
+        <div
+          className={`h-full ${color} transition-all duration-1000 ease-out`}
+          style={{ width: `${pct}%` }}
         />
       </div>
       <span className="w-12 text-right text-primary">{loading ? "-" : count}</span>
@@ -462,9 +464,8 @@ export function SkillsMap() {
                         key={sk.name}
                         onMouseEnter={() => setHover(sk.name)}
                         onMouseLeave={() => setHover(null)}
-                        className={`flex items-center gap-2 leading-6 px-1 -mx-1 rounded transition-colors ${
-                          isActive ? "bg-surface-2/60" : "hover:bg-surface-2/30"
-                        }`}
+                        className={`flex items-center gap-2 leading-6 px-1 -mx-1 rounded transition-colors ${isActive ? "bg-surface-2/60" : "hover:bg-surface-2/30"
+                          }`}
                       >
                         <span className="text-muted-foreground whitespace-pre">{pipe}{skBranch}</span>
                         <span className={isActive ? "text-accent" : "text-foreground/90"}>
