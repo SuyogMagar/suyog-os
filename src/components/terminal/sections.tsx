@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { GitHubCalendar } from "react-github-calendar";
 import { AsciiShowcase } from "./AsciiShowcase";
 import { ABOUT_MD, PROJECTS, SKILL_CATEGORIES, TIMELINE, type Project } from "./data";
 
@@ -67,7 +68,95 @@ export function Neofetch() {
           </div>
         </div>
       </div>
+      <div className="border-t border-border p-5 space-y-6 mt-4">
+        <GithubStats />
+        <LeetcodeStats />
+      </div>
     </Window>
+  );
+}
+
+function GithubStats() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+        <span className="text-accent">★</span> GitHub Profile
+      </div>
+      <div className="grid gap-4 md:grid-cols-[1fr_200px]">
+        <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-4">
+          <GitHubCalendar
+            username="suyogmagar"
+            colorScheme="dark"
+            fontSize={10}
+            blockSize={10}
+            blockMargin={4}
+          />
+        </div>
+        <div className="space-y-3">
+          <div>
+            <div className="text-[10px] uppercase text-muted-foreground">Highlights</div>
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-primary">
+              <span className="rounded border border-accent/30 bg-accent/20 px-2 py-0.5 text-accent">Developer Program Member</span>
+            </div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase text-muted-foreground">Achievements</div>
+            <div className="mt-1 flex flex-wrap gap-1.5 text-xs">
+              <span className="rounded border border-border bg-surface-2 px-2 py-0.5 text-foreground">Arctic Code Vault</span>
+              <span className="rounded border border-border bg-surface-2 px-2 py-0.5 text-foreground">Pull Shark</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeetcodeStats() {
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+        <span className="text-accent">⚡</span> LeetCode Profile
+      </div>
+      <div className="grid gap-4 md:grid-cols-[200px_1fr]">
+        <div className="space-y-3 rounded-lg border border-border bg-surface-2/40 p-4">
+          <div>
+            <div className="text-[10px] uppercase text-muted-foreground">Contest Rating</div>
+            <div className="mt-1 text-xl font-bold text-primary">1,842</div>
+            <div className="text-[10px] text-accent">Top 12%</div>
+          </div>
+          <div>
+            <div className="text-[10px] uppercase text-muted-foreground">Badges</div>
+            <div className="mt-1 flex flex-wrap gap-1.5 text-xs">
+              <span className="rounded border border-[oklch(0.82_0.16_85)] bg-[oklch(0.82_0.16_85)]/10 px-2 py-0.5 text-[oklch(0.82_0.16_85)]">Knight</span>
+              <span className="rounded border border-border bg-surface-2 px-2 py-0.5 text-foreground">100 Days 2024</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-4">
+          <div className="mb-3 text-[10px] uppercase text-muted-foreground">Problems Solved</div>
+          <div className="space-y-2">
+            <ProblemBar label="Easy" count={245} total={800} color="bg-[oklch(0.78_0.15_160)]" />
+            <ProblemBar label="Medium" count={420} total={1600} color="bg-[oklch(0.82_0.16_85)]" />
+            <ProblemBar label="Hard" count={85} total={700} color="bg-[oklch(0.68_0.22_25)]" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProblemBar({ label, count, total, color }: { label: string; count: number; total: number; color: string }) {
+  const pct = Math.min(100, Math.max(0, (count / total) * 100));
+  return (
+    <div className="flex items-center gap-3 text-xs">
+      <span className="w-12 text-muted-foreground">{label}</span>
+      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-background">
+        <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
+      </div>
+      <span className="w-10 text-right text-primary">{count}</span>
+    </div>
   );
 }
 
