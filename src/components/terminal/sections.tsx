@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { GitHubCalendar } from "react-github-calendar";
 import { AsciiShowcase } from "./AsciiShowcase";
 import { ABOUT_MD, PROJECTS, SKILL_CATEGORIES, TIMELINE, type Project } from "./data";
@@ -37,7 +37,7 @@ export function Neofetch() {
     <Window title="suyog@portfolio: ~ — neofetch">
       <div className="grid gap-6 p-5 lg:grid-cols-[1fr_1.5fr]">
         <div className="flex flex-col space-y-6">
-          <div className="space-y-2 text-sm">
+          <div className="space-y-3 text-base">
             <Row k="user" v="Suyog Magar" highlight />
             <Row k="role" v="Backend Engineer" />
             <Row k="location" v="India" />
@@ -45,35 +45,35 @@ export function Neofetch() {
             <Row k="shell" v="zsh + tmux" />
             <Row k="editor" v="Neovim · IntelliJ" />
             <Row k="focus" v="Backend · Distributed Systems · Realtime Pipelines" />
-            <div className="mt-3">
-              <div className="text-xs text-muted-foreground">primary stack</div>
-              <div className="mt-1 flex flex-wrap gap-1.5">
+            <div className="mt-4">
+              <div className="text-sm text-muted-foreground">primary stack</div>
+              <div className="mt-2 flex flex-wrap gap-2">
                 {["Java", "Spring Boot", "Kafka", "Redis", "Docker", "Kubernetes"].map((t) => (
-                  <span key={t} className="rounded-md border border-border bg-surface-2 px-2 py-0.5 text-xs text-primary">
+                  <span key={t} className="rounded-md border border-border bg-surface-2 px-3 py-1 text-sm text-primary">
                     {t}
                   </span>
                 ))}
               </div>
             </div>
-            <div className="mt-3 flex gap-1">
+            <div className="mt-4 flex gap-1.5">
               {["bg-primary", "bg-accent", "bg-[oklch(0.82_0.16_85)]", "bg-[oklch(0.68_0.22_25)]", "bg-foreground/70"].map((c) => (
-                <span key={c} className={`h-3 w-6 rounded-sm ${c}`} />
+                <span key={c} className={`h-4 w-8 rounded-sm ${c}`} />
               ))}
             </div>
           </div>
-          <div className="mt-auto pt-4 border-t border-border">
+          <div className="mt-auto pt-5 border-t border-border">
             <LeetcodeStats />
           </div>
         </div>
         <div className="flex min-w-0 flex-col space-y-6">
-          <div className="relative h-48 w-full overflow-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)]">
+          <div className="relative h-60 w-full overflow-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)]">
             <AsciiShowcase className="absolute inset-0 size-full" />
             <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
-            <div className="absolute bottom-2 left-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+            <div className="absolute bottom-3 left-4 text-xs uppercase tracking-widest text-muted-foreground">
               ident · globe.live
             </div>
           </div>
-          <div className="pt-4 border-t border-border">
+          <div className="pt-5 border-t border-border">
             <GithubStats />
           </div>
         </div>
@@ -83,33 +83,46 @@ export function Neofetch() {
 }
 
 function GithubStats() {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
+    }
+  }, []);
+
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
         <span className="text-accent">★</span> GitHub Profile
       </div>
-      <div className="flex flex-col 2xl:flex-row gap-4">
-        <div className="flex-1 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-4">
-          <GitHubCalendar
-            username="suyogmagar"
-            colorScheme="dark"
-            fontSize={10}
-            blockSize={10}
-            blockMargin={4}
-          />
+      <div className="flex flex-col 2xl:flex-row gap-5">
+        <div 
+          ref={scrollRef}
+          className="flex-1 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-5 scroll-smooth"
+        >
+          <div className="min-w-max">
+            <GitHubCalendar
+              username="suyogmagar"
+              colorScheme="dark"
+              fontSize={12}
+              blockSize={14}
+              blockMargin={5}
+            />
+          </div>
         </div>
-        <div className="space-y-3 2xl:w-[200px]">
+        <div className="space-y-4 2xl:w-[220px]">
           <div>
-            <div className="text-[10px] uppercase text-muted-foreground">Highlights</div>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-primary">
-              <span className="rounded border border-accent/30 bg-accent/20 px-2 py-0.5 text-accent">Developer Program Member</span>
+            <div className="text-xs uppercase text-muted-foreground">Highlights</div>
+            <div className="mt-1 flex items-center gap-1.5 text-sm text-primary">
+              <span className="rounded border border-accent/30 bg-accent/20 px-2 py-1 text-accent">Developer Program Member</span>
             </div>
           </div>
           <div>
-            <div className="text-[10px] uppercase text-muted-foreground">Achievements</div>
-            <div className="mt-1 flex flex-wrap gap-1.5 text-xs">
-              <span className="rounded border border-border bg-surface-2 px-2 py-0.5 text-foreground">Arctic Code Vault</span>
-              <span className="rounded border border-border bg-surface-2 px-2 py-0.5 text-foreground">Pull Shark</span>
+            <div className="text-xs uppercase text-muted-foreground">Achievements</div>
+            <div className="mt-1 flex flex-wrap gap-2 text-sm">
+              <span className="rounded border border-border bg-surface-2 px-2 py-1 text-foreground">Arctic Code Vault</span>
+              <span className="rounded border border-border bg-surface-2 px-2 py-1 text-foreground">Pull Shark</span>
             </div>
           </div>
         </div>
@@ -119,33 +132,76 @@ function GithubStats() {
 }
 
 function LeetcodeStats() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeetcode = async () => {
+      try {
+        const username = "Suyog_Magar";
+        const [solvedRes, contestRes, badgesRes] = await Promise.all([
+          fetch(`https://alfa-leetcode-api.onrender.com/${username}/solved`).then((r) => r.json()),
+          fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`).then((r) => r.json()),
+          fetch(`https://alfa-leetcode-api.onrender.com/${username}/badges`).then((r) => r.json()),
+        ]);
+        
+        setData({
+          easy: solvedRes.easySolved || 0,
+          medium: solvedRes.mediumSolved || 0,
+          hard: solvedRes.hardSolved || 0,
+          rating: contestRes.contestRating ? Math.round(contestRes.contestRating) : "N/A",
+          topPercentage: contestRes.contestTopPercentage || "N/A",
+          badges: badgesRes.badges ? badgesRes.badges.slice(0, 2).map((b: any) => b.displayName) : [],
+        });
+      } catch (e) {
+        console.error("Failed to fetch LeetCode stats", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeetcode();
+  }, []);
+
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
         <span className="text-accent">⚡</span> LeetCode Profile
       </div>
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="space-y-3 rounded-lg border border-border bg-surface-2/40 p-4 sm:w-[180px] shrink-0">
+      <div className="flex flex-col sm:flex-row gap-5">
+        <div className="space-y-4 rounded-lg border border-border bg-surface-2/40 p-5 sm:w-[220px] shrink-0">
           <div>
-            <div className="text-[10px] uppercase text-muted-foreground">Contest Rating</div>
-            <div className="mt-1 text-xl font-bold text-primary">1,842</div>
-            <div className="text-[10px] text-accent">Top 12%</div>
+            <div className="text-xs uppercase text-muted-foreground">Contest Rating</div>
+            <div className="mt-1 text-2xl font-bold text-primary">
+              {loading ? "..." : data?.rating?.toLocaleString()}
+            </div>
+            {!loading && data?.topPercentage !== "N/A" && (
+              <div className="text-xs text-accent">Top {data?.topPercentage}%</div>
+            )}
           </div>
           <div>
-            <div className="text-[10px] uppercase text-muted-foreground">Badges</div>
-            <div className="mt-1 flex flex-wrap gap-1.5 text-xs">
-              <span className="rounded border border-[oklch(0.82_0.16_85)] bg-[oklch(0.82_0.16_85)]/10 px-2 py-0.5 text-[oklch(0.82_0.16_85)]">Knight</span>
-              <span className="rounded border border-border bg-surface-2 px-2 py-0.5 text-foreground">100 Days 2024</span>
+            <div className="text-xs uppercase text-muted-foreground">Badges</div>
+            <div className="mt-1 flex flex-wrap gap-2 text-sm">
+              {loading ? (
+                <span className="text-muted-foreground">Loading...</span>
+              ) : data?.badges.length > 0 ? (
+                data.badges.map((b: string, i: number) => (
+                  <span key={i} className="rounded border border-[oklch(0.82_0.16_85)] bg-[oklch(0.82_0.16_85)]/10 px-2 py-1 text-[oklch(0.82_0.16_85)]">
+                    {b}
+                  </span>
+                ))
+              ) : (
+                <span className="text-muted-foreground">No Badges</span>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-4 flex-1">
-          <div className="mb-3 text-[10px] uppercase text-muted-foreground">Problems Solved</div>
-          <div className="space-y-2">
-            <ProblemBar label="Easy" count={245} total={800} color="bg-[oklch(0.78_0.15_160)]" />
-            <ProblemBar label="Medium" count={420} total={1600} color="bg-[oklch(0.82_0.16_85)]" />
-            <ProblemBar label="Hard" count={85} total={700} color="bg-[oklch(0.68_0.22_25)]" />
+        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-5 flex-1">
+          <div className="mb-4 text-xs uppercase text-muted-foreground">Problems Solved</div>
+          <div className="space-y-3">
+            <ProblemBar label="Easy" count={data?.easy} total={800} color="bg-[oklch(0.78_0.15_160)]" loading={loading} />
+            <ProblemBar label="Medium" count={data?.medium} total={1600} color="bg-[oklch(0.82_0.16_85)]" loading={loading} />
+            <ProblemBar label="Hard" count={data?.hard} total={700} color="bg-[oklch(0.68_0.22_25)]" loading={loading} />
           </div>
         </div>
       </div>
@@ -153,15 +209,18 @@ function LeetcodeStats() {
   );
 }
 
-function ProblemBar({ label, count, total, color }: { label: string; count: number; total: number; color: string }) {
-  const pct = Math.min(100, Math.max(0, (count / total) * 100));
+function ProblemBar({ label, count, total, color, loading }: { label: string; count: number | undefined; total: number; color: string; loading: boolean }) {
+  const pct = loading || !count ? 0 : Math.min(100, Math.max(0, (count / total) * 100));
   return (
-    <div className="flex items-center gap-3 text-xs">
-      <span className="w-12 text-muted-foreground">{label}</span>
-      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-background">
-        <div className={`h-full ${color}`} style={{ width: `${pct}%` }} />
+    <div className="flex items-center gap-4 text-sm">
+      <span className="w-16 text-muted-foreground">{label}</span>
+      <div className="h-2 flex-1 overflow-hidden rounded-full bg-background">
+        <div 
+          className={`h-full ${color} transition-all duration-1000 ease-out`} 
+          style={{ width: `${pct}%` }} 
+        />
       </div>
-      <span className="w-10 text-right text-primary">{count}</span>
+      <span className="w-12 text-right text-primary">{loading ? "-" : count}</span>
     </div>
   );
 }
