@@ -35,42 +35,48 @@ export function Window({
 export function Neofetch() {
   return (
     <Window title="suyog@portfolio: ~ — neofetch">
-      <div className="grid gap-6 p-5 md:grid-cols-2">
-        <div className="space-y-2 text-sm">
-          <Row k="user" v="Suyog Magar" highlight />
-          <Row k="role" v="Backend Engineer" />
-          <Row k="location" v="India" />
-          <Row k="os" v="Linux · Arch / Ubuntu" />
-          <Row k="shell" v="zsh + tmux" />
-          <Row k="editor" v="Neovim · IntelliJ" />
-          <Row k="focus" v="Backend · Distributed Systems · Realtime Pipelines" />
-          <div className="mt-3">
-            <div className="text-xs text-muted-foreground">primary stack</div>
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              {["Java", "Spring Boot", "Kafka", "Redis", "Docker", "Kubernetes"].map((t) => (
-                <span key={t} className="rounded-md border border-border bg-surface-2 px-2 py-0.5 text-xs text-primary">
-                  {t}
-                </span>
+      <div className="grid gap-6 p-5 lg:grid-cols-[1fr_1.5fr]">
+        <div className="flex flex-col space-y-6">
+          <div className="space-y-2 text-sm">
+            <Row k="user" v="Suyog Magar" highlight />
+            <Row k="role" v="Backend Engineer" />
+            <Row k="location" v="India" />
+            <Row k="os" v="Linux · Arch / Ubuntu" />
+            <Row k="shell" v="zsh + tmux" />
+            <Row k="editor" v="Neovim · IntelliJ" />
+            <Row k="focus" v="Backend · Distributed Systems · Realtime Pipelines" />
+            <div className="mt-3">
+              <div className="text-xs text-muted-foreground">primary stack</div>
+              <div className="mt-1 flex flex-wrap gap-1.5">
+                {["Java", "Spring Boot", "Kafka", "Redis", "Docker", "Kubernetes"].map((t) => (
+                  <span key={t} className="rounded-md border border-border bg-surface-2 px-2 py-0.5 text-xs text-primary">
+                    {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="mt-3 flex gap-1">
+              {["bg-primary", "bg-accent", "bg-[oklch(0.82_0.16_85)]", "bg-[oklch(0.68_0.22_25)]", "bg-foreground/70"].map((c) => (
+                <span key={c} className={`h-3 w-6 rounded-sm ${c}`} />
               ))}
             </div>
           </div>
-          <div className="mt-3 flex gap-1">
-            {["bg-primary", "bg-accent", "bg-[oklch(0.82_0.16_85)]", "bg-[oklch(0.68_0.22_25)]", "bg-foreground/70"].map((c) => (
-              <span key={c} className={`h-3 w-6 rounded-sm ${c}`} />
-            ))}
+          <div className="mt-auto pt-4 border-t border-border">
+            <LeetcodeStats />
           </div>
         </div>
-        <div className="relative h-64 overflow-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] md:h-full md:min-h-[16rem]">
-          <AsciiShowcase className="absolute inset-0 size-full" />
-          <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
-          <div className="absolute bottom-2 left-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-            ident · globe.live
+        <div className="flex min-w-0 flex-col space-y-6">
+          <div className="relative h-48 w-full overflow-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)]">
+            <AsciiShowcase className="absolute inset-0 size-full" />
+            <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
+            <div className="absolute bottom-2 left-3 text-[10px] uppercase tracking-widest text-muted-foreground">
+              ident · globe.live
+            </div>
+          </div>
+          <div className="pt-4 border-t border-border">
+            <GithubStats />
           </div>
         </div>
-      </div>
-      <div className="border-t border-border p-5 space-y-6 mt-4">
-        <GithubStats />
-        <LeetcodeStats />
       </div>
     </Window>
   );
@@ -82,8 +88,8 @@ function GithubStats() {
       <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
         <span className="text-accent">★</span> GitHub Profile
       </div>
-      <div className="grid gap-4 md:grid-cols-[1fr_200px]">
-        <div className="overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-4">
+      <div className="flex flex-col 2xl:flex-row gap-4">
+        <div className="flex-1 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-4">
           <GitHubCalendar
             username="suyogmagar"
             colorScheme="dark"
@@ -92,7 +98,7 @@ function GithubStats() {
             blockMargin={4}
           />
         </div>
-        <div className="space-y-3">
+        <div className="space-y-3 2xl:w-[200px]">
           <div>
             <div className="text-[10px] uppercase text-muted-foreground">Highlights</div>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-primary">
@@ -118,8 +124,8 @@ function LeetcodeStats() {
       <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
         <span className="text-accent">⚡</span> LeetCode Profile
       </div>
-      <div className="grid gap-4 md:grid-cols-[200px_1fr]">
-        <div className="space-y-3 rounded-lg border border-border bg-surface-2/40 p-4">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="space-y-3 rounded-lg border border-border bg-surface-2/40 p-4 sm:w-[180px] shrink-0">
           <div>
             <div className="text-[10px] uppercase text-muted-foreground">Contest Rating</div>
             <div className="mt-1 text-xl font-bold text-primary">1,842</div>
@@ -134,7 +140,7 @@ function LeetcodeStats() {
           </div>
         </div>
 
-        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-4">
+        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-4 flex-1">
           <div className="mb-3 text-[10px] uppercase text-muted-foreground">Problems Solved</div>
           <div className="space-y-2">
             <ProblemBar label="Easy" count={245} total={800} color="bg-[oklch(0.78_0.15_160)]" />
@@ -804,7 +810,7 @@ export function HeaderBar({ now }: { now: Date }) {
   );
   return (
     <div className="sticky top-0 z-30 border-b border-border bg-background/70 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2 text-xs">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 text-xs">
         <div className="flex items-center gap-2">
           <span className="size-2 rounded-full bg-accent shadow-[0_0_8px_oklch(0.78_0.15_160)]" />
           <span className="text-foreground">suyog@portfolio</span>

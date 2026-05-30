@@ -232,7 +232,7 @@ type 'help' for available commands`}
 
           {/* Command nav rail */}
           <div className="sticky top-[34px] z-20 border-b border-border bg-background/60 backdrop-blur-md">
-            <div className="mx-auto flex max-w-5xl gap-1 overflow-x-auto px-4 py-2 text-xs">
+            <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 py-2 text-xs">
               {navItems.map((n) => (
                 <button
                   key={n}
@@ -250,7 +250,7 @@ type 'help' for available commands`}
           </div>
 
           {/* Output stream */}
-          <main className="mx-auto max-w-5xl px-4 pb-40 pt-4">
+          <main className="mx-auto max-w-7xl px-4 pb-40 pt-4">
             <div className="space-y-4">
               {blocks.map((b) => (
                 <motion.section
@@ -275,7 +275,7 @@ type 'help' for available commands`}
 
           {/* Persistent command line */}
           <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/80 backdrop-blur-lg">
-            <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-3">
+            <div className="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3">
               <span className="text-prompt">suyog@portfolio</span>
               <span className="text-muted-foreground">:~$</span>
               <input
