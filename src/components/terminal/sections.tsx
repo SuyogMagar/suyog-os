@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { AsciiShowcase } from "./AsciiShowcase";
-import { ABOUT_MD, PROJECTS, SKILLS_GRAPH, SKILL_EDGES, TIMELINE, type Project } from "./data";
+import { ABOUT_MD, PROJECTS, SKILL_CATEGORIES, TIMELINE, type Project } from "./data";
 
 /* ---------- Shared bits ---------- */
 
