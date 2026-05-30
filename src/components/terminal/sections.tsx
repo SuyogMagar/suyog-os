@@ -32,6 +32,8 @@ export function Window({
 
 /* ---------- neofetch ---------- */
 
+import { Users, Zap, Timer, GitPullRequest } from "lucide-react";
+
 export function Neofetch() {
   return (
     <Window title="suyog@portfolio: ~ — neofetch">
@@ -76,6 +78,9 @@ export function Neofetch() {
           <div className="pt-5 border-t border-border">
             <GithubStats />
           </div>
+          <div className="pt-2">
+            <AchievementsSection />
+          </div>
         </div>
       </div>
     </Window>
@@ -84,47 +89,64 @@ export function Neofetch() {
 
 function GithubStats() {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [totalCommits, setTotalCommits] = useState<number>(320);
 
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollLeft = scrollRef.current.scrollWidth;
-    }
+    fetch('https://github-contributions-api.jasonbarry.com/v1/suyogmagar')
+      .then(r => r.json())
+      .then(d => {
+        if (d && d.total && typeof d.total.lastYear === 'number') {
+          setTotalCommits(d.total.lastYear);
+        }
+      })
+      .catch(console.error);
+
+    if (!scrollRef.current) return;
+    const el = scrollRef.current;
+
+    
+    const interval = setInterval(() => {
+      if (el.scrollWidth > el.clientWidth) {
+        el.scrollLeft = el.scrollWidth;
+      }
+    }, 100);
+    
+    setTimeout(() => clearInterval(interval), 3000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
-        <span className="text-accent">★</span> GitHub Profile
-      </div>
-      <div className="flex flex-col 2xl:flex-row gap-5">
-        <div 
-          ref={scrollRef}
-          className="flex-1 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-5 scroll-smooth"
-        >
-          <div className="min-w-max">
-            <GitHubCalendar
-              username="suyogmagar"
-              colorScheme="dark"
-              fontSize={12}
-              blockSize={14}
-              blockMargin={5}
-            />
-          </div>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm uppercase tracking-widest text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <span className="text-accent">★</span> GitHub Profile
         </div>
-        <div className="space-y-4 2xl:w-[220px]">
-          <div>
-            <div className="text-xs uppercase text-muted-foreground">Highlights</div>
-            <div className="mt-1 flex items-center gap-1.5 text-sm text-primary">
-              <span className="rounded border border-accent/30 bg-accent/20 px-2 py-1 text-accent">Developer Program Member</span>
-            </div>
+        {totalCommits !== null && (
+          <div className="text-xs text-primary font-bold">
+            {totalCommits} Contributions <span className="text-muted-foreground font-normal">Last Year</span>
           </div>
-          <div>
-            <div className="text-xs uppercase text-muted-foreground">Achievements</div>
-            <div className="mt-1 flex flex-wrap gap-2 text-sm">
-              <span className="rounded border border-border bg-surface-2 px-2 py-1 text-foreground">Arctic Code Vault</span>
-              <span className="rounded border border-border bg-surface-2 px-2 py-1 text-foreground">Pull Shark</span>
-            </div>
-          </div>
+        )}
+      </div>
+      <div 
+        ref={scrollRef}
+        className="flex-1 overflow-x-auto overflow-y-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] p-5"
+      >
+        <div className="min-w-max" id="github-calendar-wrapper">
+          <style dangerouslySetInnerHTML={{__html: `
+            #github-calendar-wrapper article footer,
+            #github-calendar-wrapper .react-activity-calendar__footer {
+              display: none !important;
+            }
+          `}} />
+          <GitHubCalendar
+            username="suyogmagar"
+            colorScheme="dark"
+            fontSize={12}
+            blockSize={11}
+            blockMargin={4}
+            hideTotalCount={true}
+            hideColorLegend={true}
+          />
         </div>
       </div>
     </div>
@@ -137,24 +159,37 @@ function LeetcodeStats() {
 
   useEffect(() => {
     const fetchLeetcode = async () => {
+      const fallbackData = {
+        easy: 133,
+        medium: 140,
+        hard: 27,
+        total: 300,
+        rating: 1675,
+        topPercentage: 15.5,
+      };
+
       try {
         const username = "Suyog_Magar";
-        const [solvedRes, contestRes, badgesRes] = await Promise.all([
+        const [solvedRes, contestRes] = await Promise.all([
           fetch(`https://alfa-leetcode-api.onrender.com/${username}/solved`).then((r) => r.json()),
-          fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`).then((r) => r.json()),
-          fetch(`https://alfa-leetcode-api.onrender.com/${username}/badges`).then((r) => r.json()),
+          fetch(`https://alfa-leetcode-api.onrender.com/${username}/contest`).then((r) => r.json())
         ]);
         
-        setData({
-          easy: solvedRes.easySolved || 0,
-          medium: solvedRes.mediumSolved || 0,
-          hard: solvedRes.hardSolved || 0,
-          rating: contestRes.contestRating ? Math.round(contestRes.contestRating) : "N/A",
-          topPercentage: contestRes.contestTopPercentage || "N/A",
-          badges: badgesRes.badges ? badgesRes.badges.slice(0, 2).map((b: any) => b.displayName) : [],
-        });
+        if (!solvedRes.solvedProblem) {
+          setData(fallbackData);
+        } else {
+          setData({
+            easy: solvedRes.easySolved || 0,
+            medium: solvedRes.mediumSolved || 0,
+            hard: solvedRes.hardSolved || 0,
+            total: solvedRes.solvedProblem || 0,
+            rating: contestRes.contestRating ? Math.round(contestRes.contestRating) : fallbackData.rating,
+            topPercentage: contestRes.contestTopPercentage || fallbackData.topPercentage,
+          });
+        }
       } catch (e) {
         console.error("Failed to fetch LeetCode stats", e);
+        setData(fallbackData);
       } finally {
         setLoading(false);
       }
@@ -162,48 +197,138 @@ function LeetcodeStats() {
     fetchLeetcode();
   }, []);
 
+  const easyPct = data?.total ? (data.easy / data.total) * 100 : 0;
+  const medPct = data?.total ? easyPct + (data.medium / data.total) * 100 : 0;
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
         <span className="text-accent">⚡</span> LeetCode Profile
       </div>
       <div className="flex flex-col sm:flex-row gap-5">
-        <div className="space-y-4 rounded-lg border border-border bg-surface-2/40 p-5 sm:w-[220px] shrink-0">
+        <div className="space-y-4 rounded-lg border border-border bg-surface-2/40 p-5 sm:w-[160px] shrink-0 flex flex-col justify-center">
           <div>
             <div className="text-xs uppercase text-muted-foreground">Contest Rating</div>
-            <div className="mt-1 text-2xl font-bold text-primary">
+            <div className="mt-1 text-3xl font-bold text-primary">
               {loading ? "..." : data?.rating?.toLocaleString()}
             </div>
             {!loading && data?.topPercentage !== "N/A" && (
-              <div className="text-xs text-accent">Top {data?.topPercentage}%</div>
+              <div className="mt-1 text-xs text-accent">Top {data?.topPercentage}%</div>
             )}
-          </div>
-          <div>
-            <div className="text-xs uppercase text-muted-foreground">Badges</div>
-            <div className="mt-1 flex flex-wrap gap-2 text-sm">
-              {loading ? (
-                <span className="text-muted-foreground">Loading...</span>
-              ) : data?.badges.length > 0 ? (
-                data.badges.map((b: string, i: number) => (
-                  <span key={i} className="rounded border border-[oklch(0.82_0.16_85)] bg-[oklch(0.82_0.16_85)]/10 px-2 py-1 text-[oklch(0.82_0.16_85)]">
-                    {b}
-                  </span>
-                ))
-              ) : (
-                <span className="text-muted-foreground">No Badges</span>
-              )}
-            </div>
           </div>
         </div>
 
-        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-5 flex-1">
-          <div className="mb-4 text-xs uppercase text-muted-foreground">Problems Solved</div>
-          <div className="space-y-3">
-            <ProblemBar label="Easy" count={data?.easy} total={800} color="bg-[oklch(0.78_0.15_160)]" loading={loading} />
-            <ProblemBar label="Medium" count={data?.medium} total={1600} color="bg-[oklch(0.82_0.16_85)]" loading={loading} />
-            <ProblemBar label="Hard" count={data?.hard} total={700} color="bg-[oklch(0.68_0.22_25)]" loading={loading} />
+        <div className="flex flex-col justify-center rounded-lg border border-border bg-surface-2/40 p-5 flex-1 relative group cursor-pointer h-[160px]">
+          <div className="absolute top-5 left-5 text-xs uppercase text-muted-foreground z-10 transition-opacity group-hover:opacity-0">
+            Problems Solved
+          </div>
+          
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100 bg-surface-2/95 z-20 rounded-lg p-5">
+            <div className="w-full space-y-3">
+              <ProblemBar label="Easy" count={data?.easy} total={800} color="bg-[oklch(0.78_0.15_160)]" loading={loading} />
+              <ProblemBar label="Medium" count={data?.medium} total={1600} color="bg-[oklch(0.82_0.16_85)]" loading={loading} />
+              <ProblemBar label="Hard" count={data?.hard} total={700} color="bg-[oklch(0.68_0.22_25)]" loading={loading} />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-center mt-4 group-hover:opacity-0 transition-opacity">
+            <div className="relative w-28 h-28 flex items-center justify-center rounded-full" 
+              style={{
+                background: loading ? 'transparent' : `conic-gradient(
+                  oklch(0.78 0.15 160) 0% ${easyPct}%, 
+                  oklch(0.82 0.16 85) ${easyPct}% ${medPct}%, 
+                  oklch(0.68 0.22 25) ${medPct}% 100%
+                )`
+              }}
+            >
+              <div className="absolute inset-1.5 bg-[oklch(0.12_0.005_240)] rounded-full flex flex-col items-center justify-center shadow-inner">
+                <span className="text-2xl font-bold text-primary">{loading ? "..." : data?.total}</span>
+                <span className="text-[10px] uppercase text-muted-foreground">Total</span>
+              </div>
+            </div>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function AchievementsSection() {
+  const [leetcodeBadges, setLeetcodeBadges] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fallbackLeetcodeBadges = [
+      { displayName: "100 Days Badge 2026", icon: "https://assets.leetcode.com/static_assets/others/100_1080_1080.png" },
+      { displayName: "50 Days Badge 2026", icon: "https://assets.leetcode.com/static_assets/others/50_1080_1080.png" },
+      { displayName: "Mar LeetCoding Challenge", icon: "https://leetcode.com/static/images/badges/dcc-2026-3.png" },
+      { displayName: "Feb LeetCoding Challenge", icon: "https://leetcode.com/static/images/badges/dcc-2026-2.png" }
+    ];
+
+    fetch(`https://alfa-leetcode-api.onrender.com/Suyog_Magar/badges`)
+      .then(r => r.json())
+      .then(data => {
+        setLeetcodeBadges(data.badges && data.badges.length > 0 ? data.badges.slice(0, 4) : fallbackLeetcodeBadges);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLeetcodeBadges(fallbackLeetcodeBadges);
+        setLoading(false);
+      });
+  }, []);
+
+  const githubBadges = [
+    { name: "Pair Extraordinaire", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pair-extraordinaire-default.png" },
+    { name: "YOLO", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/yolo-default.png" },
+    { name: "Quickdraw", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/quickdraw-default.png" },
+    { name: "Pull Shark", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pull-shark-default.png" },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
+        <span className="text-accent">🏆</span> Achievements & Badges
+      </div>
+      <div className="rounded-lg border border-border bg-surface-2/40 p-5 flex flex-col xl:flex-row gap-6 xl:items-center min-h-[100px]">
+        
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] uppercase text-muted-foreground whitespace-nowrap">GitHub</span>
+          <div className="flex gap-4">
+            {githubBadges.map(badge => (
+              <div key={badge.name} className="relative group flex items-center justify-center">
+                <img src={badge.url} alt={badge.name} className="w-12 h-12 object-contain drop-shadow-lg transition-transform hover:scale-110" />
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
+                  {badge.name}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="w-px h-10 bg-border hidden xl:block"></div>
+        <div className="h-px w-full bg-border block xl:hidden"></div>
+
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] uppercase text-muted-foreground whitespace-nowrap">LeetCode</span>
+          <div className="flex gap-3">
+            {loading ? (
+              <span className="text-muted-foreground text-sm">Loading...</span>
+            ) : (
+              leetcodeBadges.map((b: any, i: number) => {
+                const iconUrl = b.icon.startsWith("http") ? b.icon : `https://leetcode.com${b.icon}`;
+                return (
+                  <div key={i} className="relative group flex items-center justify-center">
+                    <img src={iconUrl} alt={b.displayName} className="w-10 h-10 object-contain drop-shadow-lg transition-transform hover:scale-110" />
+                    <div className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
+                      {b.displayName}
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+
       </div>
     </div>
   );
