@@ -473,8 +473,12 @@ export function ArchitectureLab() {
           nodes={["API", "Kafka", "Consumers", "Redis", "Frontend"]}
         />
         <ArchCard
-          title="Distributed File System"
-          nodes={["Client", "Gateway", "Storage Nodes"]}
+          title="GeoRescue (MongoDB 2dsphere)"
+          nodes={["Client", "Spring Boot API", "MongoDB · $near", "WebSocket Fan-out"]}
+        />
+        <ArchCard
+          title="Enterprise Operations Platform"
+          nodes={["React Client", "Spring Boot REST", "Spring JPA", "PostgreSQL"]}
         />
       </div>
     </Window>
