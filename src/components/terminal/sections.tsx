@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { NetworkGraph } from "./NetworkGraph";
+import { AsciiShowcase } from "./AsciiShowcase";
 import { ABOUT_MD, PROJECTS, SKILLS_GRAPH, SKILL_EDGES, TIMELINE, type Project } from "./data";
 
 /* ---------- Shared bits ---------- */
@@ -59,11 +59,11 @@ export function Neofetch() {
             ))}
           </div>
         </div>
-        <div className="relative h-56 overflow-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] md:h-full md:min-h-[14rem]">
-          <NetworkGraph className="absolute inset-0 size-full" />
-          <div className="pointer-events-none absolute inset-0 grid-bg opacity-30" />
+        <div className="relative h-64 overflow-hidden rounded-lg border border-border bg-[oklch(0.14_0.008_240)] md:h-full md:min-h-[16rem]">
+          <AsciiShowcase className="absolute inset-0 size-full" />
+          <div className="pointer-events-none absolute inset-0 grid-bg opacity-20" />
           <div className="absolute bottom-2 left-3 text-[10px] uppercase tracking-widest text-muted-foreground">
-            net.topology · live
+            ident · globe.live
           </div>
         </div>
       </div>
