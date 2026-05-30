@@ -513,33 +513,23 @@ export function ResumePanel() {
   return (
     <Window title="$ resume — Resume.pdf">
       <div className="grid gap-4 p-4 md:grid-cols-[1fr_220px]">
-        <div className="aspect-[1/1.3] w-full rounded-lg border border-border bg-[oklch(0.97_0.003_240)] p-6 text-[oklch(0.18_0.01_240)]">
-          <div className="text-2xl font-semibold">Suyog Magar</div>
-          <div className="text-sm">Backend Engineer · Java · Distributed Systems</div>
-          <hr className="my-3 border-[oklch(0.85_0.005_240)]" />
-          <div className="text-xs uppercase tracking-widest text-[oklch(0.45_0.01_240)]">Summary</div>
-          <p className="mt-1 text-sm">
-            Backend engineer focused on event-driven services, real-time pipelines, and reliable
-            infrastructure on Kubernetes.
-          </p>
-          <div className="mt-3 text-xs uppercase tracking-widest text-[oklch(0.45_0.01_240)]">Selected work</div>
-          <ul className="mt-1 list-disc pl-5 text-sm">
-            <li>Teckniv — multi-tenant SaaS, Kafka + Redis + K8s</li>
-            <li>Real-Time-Stock-Pipeline — 28k msg/s, p95 143ms</li>
-            <li>DecentralX — distributed file store</li>
-          </ul>
-        </div>
+        <iframe
+          src="/Resume.pdf"
+          className="aspect-[1/1.4] w-full rounded-lg border border-border bg-white"
+          title="Resume PDF"
+        />
         <div className="flex flex-col gap-2">
           <a
-            href="#"
-            onClick={(e) => { e.preventDefault(); alert("Resume PDF — wire to your hosted file."); }}
+            href="/Resume.pdf"
+            download="Suyog_Magar_Resume.pdf"
             className="rounded-md border border-primary/60 bg-primary/10 px-3 py-2 text-center text-sm text-primary transition hover:bg-primary/20"
           >
             ⬇ Download PDF
           </a>
           <a
-            href="#"
-            onClick={(e) => { e.preventDefault(); alert("Resume PDF — wire to your hosted file."); }}
+            href="/Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-md border border-border px-3 py-2 text-center text-sm hover:border-primary/60"
           >
             ⤢ View Fullscreen
