@@ -186,6 +186,10 @@ type 'help' for available commands`}
   useEffect(() => {
     if (!booted) return;
     if (blocks.length === 0) run("neofetch");
+    
+    // Ensure input is focused when the terminal becomes available
+    const timer = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [booted]);
 
@@ -286,6 +290,7 @@ type 'help' for available commands`}
                 spellCheck={false}
                 autoCapitalize="off"
                 autoComplete="off"
+                autoFocus
                 aria-label="Terminal command"
                 placeholder="type a command — try `help`"
                 className="caret-primary flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground/60"
