@@ -275,31 +275,58 @@ function LeetcodeStats() {
   );
 }
 
-function GithubBadgesSlideshow() {
-  const badges = [
-    { name: "Starstruck", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/starstruck-default.png" },
-    { name: "Pair Extraordinaire", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pair-extraordinaire-default.png" },
-    { name: "YOLO", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/yolo-default.png" },
-    { name: "Quickdraw", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/quickdraw-default.png" },
-    { name: "Pull Shark", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pull-shark-default.png" },
-  ];
+function BadgesSlideshow({ badges }: { badges: { name: string, url: string }[] }) {
+  if (!badges || badges.length === 0) return null;
+
+  const repeatedBadges: { name: string, url: string }[] = [];
+  const copies = Math.max(1, Math.ceil(8 / badges.length)); 
+  for(let i=0; i<copies; i++) {
+    repeatedBadges.push(...badges);
+  }
 
   return (
-    <div className="flex items-center overflow-hidden w-[224px] h-[80px] group/slider">
+    <div className="flex overflow-hidden flex-1 slider-container w-full min-w-0" style={{
+      maskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)',
+      WebkitMaskImage: 'linear-gradient(to right, transparent, black 15%, black 85%, transparent)'
+    }}>
       <style>{`
-        @keyframes custom-marquee {
+        @keyframes scroll {
           0% { transform: translateX(0); }
-          100% { transform: translateX(calc(-50% - 0.5rem)); }
+          100% { transform: translateX(-100%); }
         }
-        .animate-custom-marquee {
-          animation: custom-marquee 12s linear infinite;
+        .animate-scroll {
+          animation: scroll 20s linear infinite;
+        }
+        .slider-container:hover .animate-scroll {
+          animation-play-state: paused;
+        }
+        .badge-item:hover .badge-tooltip {
+          opacity: 1;
+          visibility: visible;
+        }
+        .badge-item:hover img {
+          transform: scale(1.15);
+        }
+        .badge-tooltip {
+          visibility: hidden;
         }
       `}</style>
-      <div className="flex gap-4 w-max animate-custom-marquee group-hover/slider:[animation-play-state:paused]">
-        {[...badges, ...badges].map((badge, idx) => (
-          <div key={`${badge.name}-${idx}`} className="relative group/badge flex shrink-0 items-center justify-center w-16 h-16 cursor-default">
-            <img src={badge.url} alt={badge.name} className="w-16 h-16 object-contain drop-shadow-lg transition-transform group-hover/badge:scale-110" />
-            <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover/badge:opacity-100 pointer-events-none z-[60] border border-border shadow-lg">
+      
+      <div className="flex gap-4 w-max animate-scroll pr-4 shrink-0 items-center">
+        {repeatedBadges.map((badge, idx) => (
+          <div key={`orig-${idx}`} className="relative badge-item flex shrink-0 items-center justify-center w-16 h-16 cursor-default">
+            <img src={badge.url} alt={badge.name} className="w-16 h-16 object-contain drop-shadow-lg transition-transform duration-300" />
+            <div className="badge-tooltip absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity pointer-events-none z-[60] border border-border shadow-lg">
+              {badge.name}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="flex gap-4 w-max animate-scroll pr-4 shrink-0 items-center" aria-hidden="true">
+        {repeatedBadges.map((badge, idx) => (
+          <div key={`dup-${idx}`} className="relative badge-item flex shrink-0 items-center justify-center w-16 h-16 cursor-default">
+            <img src={badge.url} alt={badge.name} className="w-16 h-16 object-contain drop-shadow-lg transition-transform duration-300" />
+            <div className="badge-tooltip absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity pointer-events-none z-[60] border border-border shadow-lg">
               {badge.name}
             </div>
           </div>
@@ -333,40 +360,41 @@ function AchievementsSection() {
       });
   }, []);
 
+  const githubBadges = [
+    { name: "Starstruck", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/starstruck-default.png" },
+    { name: "Pair Extraordinaire", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pair-extraordinaire-default.png" },
+    { name: "YOLO", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/yolo-default.png" },
+    { name: "Quickdraw", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/quickdraw-default.png" },
+    { name: "Pull Shark", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pull-shark-default.png" },
+  ];
+
+  const lcBadgesFormatted = leetcodeBadges.map((b: any) => ({
+    name: b.displayName || b.name,
+    url: b.icon.startsWith("http") ? b.icon : `https://leetcode.com${b.icon}`
+  }));
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
         <span className="text-accent">🏆</span> Achievements & Badges
       </div>
-      <div className="rounded-lg border border-border bg-surface-2/40 p-5 flex flex-col xl:flex-row gap-6 xl:items-center min-h-[100px]">
+      <div className="rounded-lg border border-border bg-surface-2/40 p-5 flex flex-col xl:flex-row gap-6 xl:items-center min-h-[100px] overflow-hidden">
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 flex-1 min-w-0">
           <span className="text-xs font-bold uppercase tracking-wider text-foreground whitespace-nowrap">GitHub</span>
-          <GithubBadgesSlideshow />
+          <BadgesSlideshow badges={githubBadges} />
         </div>
 
-        <div className="w-px h-16 bg-border hidden xl:block"></div>
-        <div className="h-px w-full bg-border block xl:hidden"></div>
+        <div className="w-px h-16 bg-border hidden xl:block shrink-0"></div>
+        <div className="h-px w-full bg-border block xl:hidden shrink-0"></div>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center gap-5 flex-1 min-w-0">
           <span className="text-xs font-bold uppercase tracking-wider text-foreground whitespace-nowrap">LeetCode</span>
-          <div className="flex gap-4">
-            {loading ? (
-              <span className="text-muted-foreground text-sm">Loading...</span>
-            ) : (
-              leetcodeBadges.map((b: any, i: number) => {
-                const iconUrl = b.icon.startsWith("http") ? b.icon : `https://leetcode.com${b.icon}`;
-                return (
-                  <div key={i} className="relative group flex items-center justify-center">
-                    <img src={iconUrl} alt={b.displayName} className="w-16 h-16 object-contain drop-shadow-lg transition-transform hover:scale-110" />
-                    <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
-                      {b.displayName}
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
+          {loading ? (
+            <span className="text-muted-foreground text-sm">Loading...</span>
+          ) : (
+            <BadgesSlideshow badges={lcBadgesFormatted} />
+          )}
         </div>
 
       </div>
