@@ -228,6 +228,6 @@ export const ABOUT_MD = [
 
 export const COMMANDS = [
   "help","about","skills","projects","resume","contact",
-  "architecture","infra","monitor","timeline","neofetch","clear","history",
+  "architecture","timeline","neofetch","clear","history",
 ] as const;
 export type Command = (typeof COMMANDS)[number] | string;
