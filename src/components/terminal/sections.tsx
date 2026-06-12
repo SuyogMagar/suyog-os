@@ -119,8 +119,18 @@ function GithubStats() {
   return (
     <div className="space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-sm uppercase tracking-widest text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <span className="text-accent">★</span> GitHub Profile
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-accent">★</span> GitHub Profile
+          </div>
+          <a
+            href="https://github.com/SuyogMagar"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 rounded border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary transition-colors hover:border-primary/60 hover:bg-primary/20"
+          >
+            VIEW <span className="text-accent font-mono">↗</span>
+          </a>
         </div>
         {totalCommits !== null && (
           <div className="text-xs text-primary font-bold">
@@ -204,8 +214,18 @@ function LeetcodeStats() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
-        <span className="text-accent">⚡</span> LeetCode Profile
+      <div className="flex items-center gap-4 text-sm uppercase tracking-widest text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <span className="text-accent">⚡</span> LeetCode Profile
+        </div>
+        <a
+          href="https://leetcode.com/u/Suyog_Magar/"
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-1.5 rounded border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary transition-colors hover:border-primary/60 hover:bg-primary/20"
+        >
+          VIEW <span className="text-accent font-mono">↗</span>
+        </a>
       </div>
       <div className="flex flex-col sm:flex-row gap-5">
         <div className="space-y-4 rounded-lg border border-border bg-surface-2/40 p-5 sm:w-[160px] shrink-0 flex flex-col justify-center">
@@ -352,12 +372,17 @@ function ProblemBar({ label, count, total, color, loading }: { label: string; co
   );
 }
 
-function Row({ k, v, highlight }: { k: string; v: string; highlight?: boolean }) {
+function Row({ k, v, highlight, href }: { k: string; v: string; highlight?: boolean; href?: string }) {
+  const inner = href ? (
+    <a href={href} target="_blank" rel="noreferrer" className={`pl-2 hover:underline ${highlight ? "text-accent" : "text-foreground"}`}>{v}</a>
+  ) : (
+    <span className={`pl-2 ${highlight ? "text-accent" : "text-foreground"}`}>{v}</span>
+  );
   return (
     <div className="flex">
       <span className="w-24 shrink-0 text-muted-foreground">{k}</span>
       <span className="text-muted-foreground">: </span>
-      <span className={`pl-2 ${highlight ? "text-accent" : "text-foreground"}`}>{v}</span>
+      {inner}
     </div>
   );
 }
@@ -909,10 +934,11 @@ export function Contact() {
     <Window title="$ contact — channels.open">
       <div className="space-y-3 p-4 text-sm">
         <div className="grid gap-2 sm:grid-cols-2">
-          <Link icon="◆" label="GitHub" v="github.com/suyogmagar" href="https://github.com/" />
+          <Link icon="◆" label="GitHub" v="github.com/SuyogMagar" href="https://github.com/SuyogMagar" />
+          <Link icon="⌖" label="LeetCode" v="leetcode.com/u/Suyog_Magar" href="https://leetcode.com/u/Suyog_Magar/" />
           <Link icon="✦" label="LinkedIn" v="linkedin.com/in/suyogmagar" href="https://linkedin.com/" />
           <Link icon="✉" label="Email" v="suyog@example.dev" href="mailto:suyog@example.dev" />
-          <Link icon="</>" label="Source" v="github.com/suyogmagar/portfolio" href="https://github.com/" />
+          <Link icon="</>" label="Source" v="github.com/SuyogMagar/portfolio" href="https://github.com/SuyogMagar" />
         </div>
         <div className="rounded-md border border-border bg-surface-2/40 p-3">
           {lines.slice(0, step + 1).map((l, i) => (
