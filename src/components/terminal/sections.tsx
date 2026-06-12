@@ -275,6 +275,40 @@ function LeetcodeStats() {
   );
 }
 
+function GithubBadgesSlideshow() {
+  const badges = [
+    { name: "Starstruck", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/starstruck-default.png" },
+    { name: "Pair Extraordinaire", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pair-extraordinaire-default.png" },
+    { name: "YOLO", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/yolo-default.png" },
+    { name: "Quickdraw", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/quickdraw-default.png" },
+    { name: "Pull Shark", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pull-shark-default.png" },
+  ];
+
+  return (
+    <div className="flex items-center overflow-hidden w-[224px] h-[80px] group/slider">
+      <style>{`
+        @keyframes custom-marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(calc(-50% - 0.5rem)); }
+        }
+        .animate-custom-marquee {
+          animation: custom-marquee 12s linear infinite;
+        }
+      `}</style>
+      <div className="flex gap-4 w-max animate-custom-marquee group-hover/slider:[animation-play-state:paused]">
+        {[...badges, ...badges].map((badge, idx) => (
+          <div key={`${badge.name}-${idx}`} className="relative group/badge flex shrink-0 items-center justify-center w-16 h-16 cursor-default">
+            <img src={badge.url} alt={badge.name} className="w-16 h-16 object-contain drop-shadow-lg transition-transform group-hover/badge:scale-110" />
+            <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover/badge:opacity-100 pointer-events-none z-[60] border border-border shadow-lg">
+              {badge.name}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function AchievementsSection() {
   const [leetcodeBadges, setLeetcodeBadges] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -299,13 +333,6 @@ function AchievementsSection() {
       });
   }, []);
 
-  const githubBadges = [
-    { name: "Pair Extraordinaire", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pair-extraordinaire-default.png" },
-    { name: "YOLO", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/yolo-default.png" },
-    { name: "Quickdraw", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/quickdraw-default.png" },
-    { name: "Pull Shark", url: "https://cdn.jsdelivr.net/gh/Schweinepriester/github-profile-achievements@main/images/pull-shark-default.png" },
-  ];
-
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 text-sm uppercase tracking-widest text-muted-foreground">
@@ -315,16 +342,7 @@ function AchievementsSection() {
 
         <div className="flex items-center gap-5">
           <span className="text-xs font-bold uppercase tracking-wider text-foreground whitespace-nowrap">GitHub</span>
-          <div className="flex gap-4">
-            {githubBadges.map(badge => (
-              <div key={badge.name} className="relative group flex items-center justify-center">
-                <img src={badge.url} alt={badge.name} className="w-16 h-16 object-contain drop-shadow-lg transition-transform hover:scale-110" />
-                <div className="absolute -top-14 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-background px-3 py-1.5 text-xs text-foreground opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none z-10 border border-border shadow-lg">
-                  {badge.name}
-                </div>
-              </div>
-            ))}
-          </div>
+          <GithubBadgesSlideshow />
         </div>
 
         <div className="w-px h-16 bg-border hidden xl:block"></div>
