@@ -586,7 +586,7 @@ export function ProjectsList({ onOpen }: { onOpen: (slug: string) => void }) {
         ))}
       </div>
       <div className="border-t border-border px-4 py-2 text-xs text-muted-foreground">
-        tip: run <span className="text-accent">cd projects/GeoRescue</span> to open a repo.
+        tip: run <span className="text-accent">cd projects/Drive-Luxe</span> to open a repo.
       </div>
     </Window>
   );
@@ -778,8 +778,8 @@ export function ArchitectureLab() {
           nodes={["API", "Kafka", "Consumers", "Redis", "Frontend"]}
         />
         <ArchCard
-          title="GeoRescue (MongoDB 2dsphere)"
-          nodes={["Client", "Spring Boot API", "MongoDB · $near", "WebSocket Fan-out"]}
+          title="Drive Luxe (Supabase Auth)"
+          nodes={["React Client", "Supabase API", "PostgreSQL", "RLS Policies"]}
         />
         <ArchCard
           title="Enterprise Operations Platform"
