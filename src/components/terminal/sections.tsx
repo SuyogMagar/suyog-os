@@ -684,89 +684,6 @@ function BulletList({ items }: { items: string[] }) {
   );
 }
 
-/* ---------- monitor / dashboard ---------- */
-
-type Series = { label: string; unit: string; value: number; max: number; tone: string };
-
-export function Monitor() {
-  const [series, setSeries] = useState<Series[]>([
-    { label: "api.requests", unit: "rps", value: 1240, max: 4000, tone: "primary" },
-    { label: "kafka.messages", unit: "msg/s", value: 8400, max: 30000, tone: "accent" },
-    { label: "redis.hit_rate", unit: "%", value: 92, max: 100, tone: "accent" },
-    { label: "docker.containers", unit: "", value: 14, max: 24, tone: "primary" },
-    { label: "response.p95", unit: "ms", value: 84, max: 400, tone: "primary" },
-    { label: "cpu.usage", unit: "%", value: 38, max: 100, tone: "primary" },
-    { label: "memory.usage", unit: "%", value: 56, max: 100, tone: "accent" },
-  ]);
-  const [spark, setSpark] = useState<number[]>(() => Array.from({ length: 48 }, () => 0.4 + Math.random() * 0.4));
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setSeries((arr) =>
-        arr.map((s) => {
-          const drift = (Math.random() - 0.5) * s.max * 0.08;
-          const v = Math.max(0, Math.min(s.max, s.value + drift));
-          return { ...s, value: v };
-        })
-      );
-      setSpark((arr) => {
-        const next = [...arr.slice(1), Math.max(0.05, Math.min(1, arr[arr.length - 1] + (Math.random() - 0.5) * 0.18))];
-        return next;
-      });
-    }, 800);
-    return () => clearInterval(id);
-  }, []);
-
-  return (
-    <Window title="$ monitor — system.dashboard">
-      <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
-        {series.map((s) => {
-          const pct = (s.value / s.max) * 100;
-          const color = s.tone === "accent" ? "bg-accent" : "bg-primary";
-          return (
-            <div key={s.label} className="rounded-lg border border-border bg-surface-2/40 p-3">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">{s.label}</span>
-                <span className="text-foreground">
-                  {s.unit === "%" ? Math.round(s.value) : Math.round(s.value).toLocaleString()}{s.unit && ` ${s.unit}`}
-                </span>
-              </div>
-              <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-background">
-                <motion.div className={`h-full ${color}`} animate={{ width: `${pct}%` }} transition={{ duration: 0.6 }} />
-              </div>
-            </div>
-          );
-        })}
-        <div className="rounded-lg border border-border bg-surface-2/40 p-3 sm:col-span-2 lg:col-span-3">
-          <div className="mb-2 flex items-center justify-between text-xs">
-            <span className="text-muted-foreground">throughput.live</span>
-            <span className="text-accent">● streaming</span>
-          </div>
-          <Sparkline data={spark} />
-        </div>
-      </div>
-    </Window>
-  );
-}
-
-function Sparkline({ data }: { data: number[] }) {
-  const W = 600, H = 70;
-  const step = W / (data.length - 1);
-  const points = data.map((v, i) => `${i * step},${H - v * H}`).join(" ");
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-20 w-full" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="sg" x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0%" stopColor="oklch(0.72 0.18 240)" stopOpacity="0.45" />
-          <stop offset="100%" stopColor="oklch(0.72 0.18 240)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polyline fill="none" stroke="oklch(0.72 0.18 240)" strokeWidth="1.5" points={points} />
-      <polygon fill="url(#sg)" points={`0,${H} ${points} ${W},${H}`} />
-    </svg>
-  );
-}
-
 /* ---------- architecture diagrams ---------- */
 
 export function ArchitectureLab() {
@@ -978,7 +895,6 @@ export function HelpPanel() {
     ["skills", "interactive infrastructure map"],
     ["projects", "ls projects/  ·  cd projects/<name>"],
     ["architecture", "system design lab"],
-    ["monitor / infra", "live infrastructure dashboard"],
     ["timeline", "engineering journey as git log"],
     ["neofetch", "developer profile panel"],
     ["resume", "open Resume.pdf"],
