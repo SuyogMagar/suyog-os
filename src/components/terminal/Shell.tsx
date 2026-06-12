@@ -7,7 +7,6 @@ import {
   Contact,
   HeaderBar,
   HelpPanel,
-  Monitor,
   Neofetch,
   PlainOutput,
   ProjectDetail,
@@ -26,7 +25,7 @@ type Block = {
 
 const NAV = [
   "neofetch", "about", "skills", "projects",
-  "architecture", "monitor", "timeline", "resume", "contact", "help",
+  "architecture", "timeline", "resume", "contact", "help",
 ];
 
 export function Shell() {
@@ -112,9 +111,6 @@ export function Shell() {
         }
         case "architecture":
           return push(cmd, <ArchitectureLab />);
-        case "monitor":
-        case "infra":
-          return push(cmd, <Monitor />);
         case "timeline":
           return push(cmd, <Timeline />);
         case "resume":
