@@ -123,10 +123,10 @@ I enjoy understanding how systems work internally and building software that sol
 
 ## 🔗 Connect
 
-- **GitHub:** [github.com/YOUR_USERNAME](https://github.com/YOUR_USERNAME)
-- **LinkedIn:** [Your LinkedIn Profile](YOUR_LINKEDIN_URL)
-- **Portfolio:** [Suyog OS](YOUR_DEPLOYED_PORTFOLIO_URL)
-- **Email:** YOUR_EMAIL
+- **GitHub:** [github.com/SuyogMagar](https://github.com/SuyogMagar)
+- **LinkedIn:** [Suyog Magar](https://www.linkedin.com/in/suyogmagar/))
+- **Portfolio:** [Suyog OS](suyog-os.vercel.app)
+- **Email:** hkmagar11@gmail.com
 
 ---
 
